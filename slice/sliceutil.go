@@ -190,15 +190,11 @@ func Clone[T comparable](t []T) []T {
 type (
 	SafeSlice struct {
 		sync.RWMutex
-		items []any
-	}
-	SliceItem struct {
-		Index int
-		value any
+		items []string
 	}
 )
 
-func (ss *SafeSlice) Append(item any) {
+func (ss *SafeSlice) Append(item string) {
 	ss.Lock()
 	defer ss.Unlock()
 
@@ -212,7 +208,7 @@ func (ss *SafeSlice) Len() int {
 	return len(ss.items)
 }
 
-func (ss *SafeSlice) GetKey(item any) int {
+func (ss *SafeSlice) GetKey(item string) int {
 	ss.RLock()
 	defer ss.RUnlock()
 
@@ -225,38 +221,38 @@ func (ss *SafeSlice) GetKey(item any) int {
 	return -1
 }
 
-func (ss *SafeSlice) Get(index int) any {
+func (ss *SafeSlice) Get(index int) string {
 	ss.RLock()
 	defer ss.RUnlock()
 
 	return ss.items[index]
 }
 
-func (ss *SafeSlice) Update(index int, item any) {
+func (ss *SafeSlice) Update(index int, item string) {
 	ss.Lock()
 	defer ss.Unlock()
 
 	ss.items[index] = item
 }
 
-func (ss *SafeSlice) List() []any {
+func (ss *SafeSlice) List() []string {
 	ss.RLock()
 	defer ss.RUnlock()
 
 	return ss.items
 }
 
-func (ss *SafeSlice) Iter() chan SliceItem {
+func (ss *SafeSlice) Iter() chan string {
 	ss.Lock()
 
-	out := make(chan SliceItem)
+	out := make(chan string)
 
 	go func() {
 		defer close(out)
 		defer ss.Unlock()
 
-		for index, value := range ss.items {
-			out <- SliceItem{index, value}
+		for _, value := range ss.items {
+			out <- value
 		}
 	}()
 
