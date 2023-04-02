@@ -212,6 +212,19 @@ func (ss *SafeSlice) Len() int {
 	return len(ss.items)
 }
 
+func (ss *SafeSlice) GetKey(item any) int {
+	ss.RLock()
+	defer ss.RUnlock()
+
+	for i, v := range ss.items {
+		if v == item {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func (ss *SafeSlice) Get(index int) any {
 	ss.RLock()
 	defer ss.RUnlock()
