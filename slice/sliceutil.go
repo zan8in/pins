@@ -3,6 +3,7 @@ package sliceutil
 import (
 	"math/rand"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -183,4 +184,68 @@ func Clone[T comparable](t []T) []T {
 	newT := make([]T, len(t))
 	copy(newT, t)
 	return newT
+}
+
+// concurrenct safe slice
+type (
+	SafeSlice struct {
+		sync.RWMutex
+		items []any
+	}
+	SliceItem struct {
+		Index int
+		value any
+	}
+)
+
+func (ss *SafeSlice) Append(item any) {
+	ss.Lock()
+	defer ss.Unlock()
+
+	ss.items = append(ss.items, item)
+}
+
+func (ss *SafeSlice) Len() int {
+	ss.RLock()
+	defer ss.RUnlock()
+
+	return len(ss.items)
+}
+
+func (ss *SafeSlice) Get(index int) any {
+	ss.RLock()
+	defer ss.RUnlock()
+
+	return ss.items[index]
+}
+
+func (ss *SafeSlice) Update(index int, item any) {
+	ss.Lock()
+	defer ss.Unlock()
+
+	ss.items[index] = item
+}
+
+func (ss *SafeSlice) List() []any {
+	ss.RLock()
+	defer ss.RUnlock()
+
+	return ss.items
+}
+
+func (ss *SafeSlice) Iter() chan SliceItem {
+	ss.Lock()
+
+	out := make(chan SliceItem)
+
+	go func() {
+		defer close(out)
+		defer ss.Unlock()
+
+		for index, value := range ss.items {
+			out <- SliceItem{index, value}
+		}
+	}()
+
+	return out
 }
