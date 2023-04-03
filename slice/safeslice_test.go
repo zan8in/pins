@@ -15,6 +15,9 @@ func TestSafe(t *testing.T) {
 	n := ss.Num("a")
 	t.Log(n)
 	ss.UpdateNum("a", 99)
+	ss.UpdateNum("a", 1)
+	t.Log(ss.Num("a"))
+	ss.ResetNum("a")
 	t.Log(ss.Num("a"))
 
 	for _, v := range ss.List() {
