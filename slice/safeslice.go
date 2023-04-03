@@ -99,7 +99,7 @@ func (ss *SafeSlice) Num(item any) int {
 }
 
 func (ss *SafeSlice) UpdateNum(item any, num int) {
-	ss.Unlock()
+	ss.Lock()
 	defer ss.Unlock()
 
 	for i, v := range ss.items {
