@@ -1,7 +1,6 @@
 package sliceutil
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -256,12 +255,4 @@ func TestClone(t *testing.T) {
 
 	bytesSlice := []byte{1, 2, 3}
 	require.Equal(t, bytesSlice, Clone(bytesSlice))
-}
-
-func TestSafe(t *testing.T) {
-	ss := SafeSlice{}
-	ss.items = append(ss.items, []string{"a", "b", "c", "d", "e", "f", "g", "h"}...)
-
-	s := ss.GetKey("d")
-	fmt.Println(s)
 }

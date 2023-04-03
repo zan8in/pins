@@ -3,7 +3,6 @@ package sliceutil
 import (
 	"math/rand"
 	"strconv"
-	"sync"
 	"time"
 )
 
@@ -184,77 +183,4 @@ func Clone[T comparable](t []T) []T {
 	newT := make([]T, len(t))
 	copy(newT, t)
 	return newT
-}
-
-// concurrenct safe slice
-type (
-	SafeSlice struct {
-		sync.RWMutex
-		items []string
-	}
-)
-
-func (ss *SafeSlice) Append(item string) {
-	ss.Lock()
-	defer ss.Unlock()
-
-	ss.items = append(ss.items, item)
-}
-
-func (ss *SafeSlice) Len() int {
-	ss.RLock()
-	defer ss.RUnlock()
-
-	return len(ss.items)
-}
-
-func (ss *SafeSlice) GetKey(item string) int {
-	ss.RLock()
-	defer ss.RUnlock()
-
-	for i, v := range ss.items {
-		if v == item {
-			return i
-		}
-	}
-
-	return -1
-}
-
-func (ss *SafeSlice) Get(index int) string {
-	ss.RLock()
-	defer ss.RUnlock()
-
-	return ss.items[index]
-}
-
-func (ss *SafeSlice) Update(index int, item string) {
-	ss.Lock()
-	defer ss.Unlock()
-
-	ss.items[index] = item
-}
-
-func (ss *SafeSlice) List() []string {
-	ss.RLock()
-	defer ss.RUnlock()
-
-	return ss.items
-}
-
-func (ss *SafeSlice) Iter() chan string {
-	ss.Lock()
-
-	out := make(chan string)
-
-	go func() {
-		defer close(out)
-		defer ss.Unlock()
-
-		for _, value := range ss.items {
-			out <- value
-		}
-	}()
-
-	return out
 }
