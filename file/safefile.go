@@ -11,9 +11,10 @@ type SafeFile struct {
 	of *os.File
 }
 
+// Cover Write File
 func (sf *SafeFile) Write(filename, data string) error {
 	if sf.of == nil {
-		f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE, 0666)
+		f, err := os.OpenFile(filename, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0666)
 		if err != nil {
 			return err
 		}
@@ -33,6 +34,7 @@ func (sf *SafeFile) Write(filename, data string) error {
 	return nil
 }
 
+// Append Write File
 func (sf *SafeFile) WriteAppend(filename, data string) error {
 	if sf.of == nil {
 		f, err := os.OpenFile(filename, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
