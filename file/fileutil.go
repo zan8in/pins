@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -454,4 +455,37 @@ func CountLinesWithOptions(reader io.Reader, separator []byte, filter func([]byt
 		}
 	}
 	return count, scanner.Err()
+}
+
+// cover file content (new replace old content)
+func CoverFile(filename, old, new string) error {
+	if !FileExists(filename) {
+		return errors.New("source file doesn't exist")
+	}
+
+	file, err := os.OpenFile(filename, os.O_RDONLY, 0666)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+
+	newdata := strings.Replace(string(data), old, new, -1)
+
+	file, err = os.OpenFile(filename, os.O_RDWR|os.O_TRUNC, 0666)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(newdata)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
