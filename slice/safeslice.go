@@ -121,3 +121,15 @@ func (ss *SafeSlice) ResetNum(item any) {
 		}
 	}
 }
+
+func (ss *SafeSlice) SetNum(item any, num int) {
+	ss.Lock()
+	defer ss.Unlock()
+
+	for i, v := range ss.items {
+		if v.value == item {
+			ss.items[i].num = num
+			return
+		}
+	}
+}

@@ -17,6 +17,10 @@ func TestSafe(t *testing.T) {
 	ss.UpdateNum("a", 99)
 	ss.UpdateNum("a", 1)
 	t.Log(ss.Num("a"))
+	ss.UpdateNum("a", -1)
+	t.Log(ss.Num("a"))
+	ss.SetNum("a", -1)
+	t.Log(ss.Num("a"))
 	ss.ResetNum("a")
 	t.Log(ss.Num("a"))
 
