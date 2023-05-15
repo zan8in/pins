@@ -108,10 +108,11 @@ func (c *Client) Receive() ([]byte, error) {
 	return buf[:n], nil
 }
 
-func (c *Client) Close() {
+func (c *Client) Close() error {
 	if c.conn != nil {
-		c.conn.Close()
+		return c.conn.Close()
 	}
+	return nil
 }
 
 func (c *Client) retryWrite(data []byte) error {
