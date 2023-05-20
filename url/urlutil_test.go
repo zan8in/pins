@@ -6,9 +6,9 @@ import (
 )
 
 func TestDomainName(t *testing.T) {
-	a, _ := DomainName("http://example.com:8080/abc.php?ada")
+	a, _ := Hostname("http://example.com:8080/abc.php?ada")
 	fmt.Println(a)
 
-	a1, _ := DomainName("xxx.example.com:8080")
+	a1, _ := Hostname("xxx.example.com:8080")
 	fmt.Println("++++", a1)
 }

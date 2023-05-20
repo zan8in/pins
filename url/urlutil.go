@@ -13,7 +13,7 @@ const (
 	DefaultHTTPSPort = "443"
 )
 
-func DomainName(s string) (string, error) {
+func Hostname(s string) (string, error) {
 	if !strings.HasPrefix(s, HTTP) && !strings.HasPrefix(s, HTTPS) {
 		s = HTTP + SchemeSeparator + s
 	}
@@ -22,4 +22,15 @@ func DomainName(s string) (string, error) {
 		return "", err
 	}
 	return u.Hostname(), nil
+}
+
+func Host(s string) (string, error) {
+	if !strings.HasPrefix(s, HTTP) && !strings.HasPrefix(s, HTTPS) {
+		s = HTTP + SchemeSeparator + s
+	}
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", err
+	}
+	return u.Host, nil
 }
