@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+
+	iputil "github.com/zan8in/pins/ip"
 )
 
 const (
@@ -34,6 +36,30 @@ func Host(s string) (string, error) {
 		return "", err
 	}
 	return u.Host, nil
+}
+
+func Domain(s string) (string, error) {
+	if !strings.HasPrefix(s, HTTP) && !strings.HasPrefix(s, HTTPS) {
+		s = HTTP + SchemeSeparator + s
+	}
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", err
+	}
+
+	host := u.Hostname()
+
+	if iputil.IsIP(host) {
+		return host, nil
+	}
+
+	parts := strings.Split(host, ".")
+	if len(parts) >= 2 {
+		mainDomain := parts[len(parts)-2] + "." + parts[len(parts)-1]
+		return mainDomain, nil
+	}
+
+	return "", fmt.Errorf("无法获取主域名")
 }
 
 // URL Encode all characters
