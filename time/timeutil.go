@@ -12,3 +12,9 @@ func ValidateDateFormat(value, layout string) bool {
 	_, err := time.Parse(layout, value)
 	return err == nil
 }
+
+// 获取几天前日期
+func GetAnyTimeAgo(days int) string {
+	t := time.Now().AddDate(0, 0, -days)
+	return t.Format("2006-01-02")
+}
